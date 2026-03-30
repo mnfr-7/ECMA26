@@ -31,6 +31,7 @@ w
 mydata$weight_g
 class(mydata$weight_g) # why?
 
+as.numeric(mydata$weight_g) # trasforma forzatamente il vettore di char in numerico
 
 ## ---- Plot the data ----
 
@@ -39,7 +40,7 @@ class(mydata$weight_g) # why?
 # let's see how it works
 # ??histogram
 # ?hist # this is the simplest way to get help in R! just a question mark!
-hist(y$weight_g, main="", xlab="Animal weight (g)") # with default break
+# hist(y$weight_g, main="", xlab="Animal weight (g)") # with default break
 hist(y$weight_g, breaks=30, main="", xlab="Animal weigth (g)") # we specified a single number giving
 # the number of cells for the histogram
 
@@ -54,14 +55,18 @@ stripchart(y$weight_g, xlab="Animal weigth (g)", method="stack")
 # boxplot
 boxplot(y$weight_g, ylab="Animal weigth (g)")
 boxplot(y$weight_g ~ I(y$footlength_mm + y$DOY), varwidth=TRUE, ylab="Animal weigth (g)")
-boxplot(y$weight_g ~ y$sex + y$age, ylab="Animal weigth (g)")
-# exercise (by your own): do the same with the foot lenght
-boxplot(y$footlength_mm, ylab="Foot length (mm)", ylim=c(15,25))
+boxplot(y$weight_g ~ y$sex + y$age, ylab="Animal weigth (g)") # peso in funzione di sesso e età
+# genera 4 boxes: F adulte, M adulti, F giovanili, M giovanili
+boxplot(y$footlength_mm ~ y$age, varwidth=TRUE, ylab="Foot length (mm)", ylim=c(15,25))
+# varwidth mette la larghezza del box in proporzione alla qtà di dati al suo interno
+# ylim limita l'ampiezza dell'ordinata per una migliore visualizzazione (tolto un outlier sbagliato)
+# ?boxplot
+
 
 ## ---- Central tendency measures ----
 
 ## the mean and the median
-weight <- na.omit(y$weight_g)
+weight <- na.omit(y$weight_g) # crea un vettore dei pesi con NA rimosse
 # mean
 mean(weight)
 mean(y$weight_g)
@@ -69,9 +74,9 @@ mean(y$weight_g)
 median(weight)
 hist(weight)
 hist(weight,prob=T,ylim=c(0,0.05)) # prob=T for relative frequencies (density)
-lines(density(rnorm(1000000,mean(weight),sd(weight))),col="red")
-segments(mean(weight),0,mean(weight),0.047,col="blue")
-segments(median(weight),0,median(weight),0.047,col="green")
+lines(density(rnorm(10000000,mean(weight),sd(weight))),col="red") # distribuzione
+segments(mean(weight),0,mean(weight),0.055,col="blue") # evidenzia la media
+segments(median(weight),0,median(weight),0.055,col="green") # evidenzia la mediana
 
 ## the mode
 # R does not have a standard in-built function to calculate mode.
@@ -82,7 +87,7 @@ getmode <- function(x) {
   uniqv <- unique(x)
   uniqv[which.max(tabulate(match(x, uniqv)))]
 }
-getmode(weight)
+getmode(weight) # valore che compare più spesso nel dataset
 
 
 ## ---- Dispersion measures ----
@@ -96,7 +101,7 @@ median(weight)
 # ?boxplot # check the range argument and its default value
 boxplot(weight, range=0)
 boxplot(na.omit(y$footlength_mm))
-boxplot(na.omit(y$footlength_mm), range=0)
+boxplot(na.omit(y$footlength_mm), range=0) # estende i baffi fino ai valori min e max
 
 # summary
 summary(weight)
@@ -108,38 +113,39 @@ var(weight)
 sd(weight)
 
 # why we square the differences?
-m <- mean(weight)
-w <- c(m+4,m+4,m-4,m-4)
-op <- par(mfrow=c(1,2))
-plot(w, pch=19, col="dark grey", ylim=c(22,40))
-abline(h=mean(w),col="blue")
-for (i in 1:length(w)) {
-  segments(i,w[i],i,mean(w),col="red",lty=2)
-}
-differences <- w-mean(w)
-differences
-# sum the differences from the mean, and divide by the number of elements:
-(sum(differences))/length(differences) # the negatives cancel the positives
-# as the sign of differences seems to be a problem, we try and use absolute values:
-sum(abs(differences))/length(differences) # this is the mean deviation
-# let's try with another vector, same mean but more spread differences
-w1 <- c(m+7,m+1,m-6,m-2)
-plot(w1, pch=19, col="dark grey", ylim=c(22,40))
-abline(h=mean(w1),col="blue")
-for (i in 1:length(w1)) {
-  segments(i,w1[i],i,mean(w1),col="red",lty=2)
-}
-par(op)
-differences.w1 <- w1-mean(w1)
-sum(abs(differences.w1))/length(differences.w1) # this is the mean deviation
-# if we finally square the differences, the standard deviation is bigger when the differences are more spread out
-sqrt(sum(differences^2)/length(differences))
-sqrt(sum(differences.w1^2)/length(differences.w1))
-## using R functions
-var(w)
-var(w1)
-sd(w)
-sd(w1)
+# m <- mean(weight)
+# w <- c(m+4,m+4,m-4,m-4)
+# op <- par(mfrow=c(1,2))
+# plot(w, pch=19, col="dark grey", ylim=c(22,40))
+# abline(h=mean(w),col="blue")
+# for (i in 1:length(w)) {
+#   segments(i,w[i],i,mean(w),col="red",lty=2)
+# }
+# differences <- w-mean(w)
+# differences
+# 
+# # sum the differences from the mean, and divide by the number of elements:
+# (sum(differences))/length(differences) # the negatives cancel the positives
+# # as the sign of differences seems to be a problem, we try and use absolute values:
+# sum(abs(differences))/length(differences) # this is the mean deviation
+# # let's try with another vector, same mean but more spread differences
+# w1 <- c(m+7,m+1,m-6,m-2)
+# plot(w1, pch=19, col="dark grey", ylim=c(22,40))
+# abline(h=mean(w1),col="blue")
+# for (i in 1:length(w1)) {
+#   segments(i,w1[i],i,mean(w1),col="red",lty=2)
+# }
+# par(op)
+# differences.w1 <- w1-mean(w1)
+# sum(abs(differences.w1))/length(differences.w1) # this is the mean deviation
+# # if we finally square the differences, the standard deviation is bigger when the differences are more spread out
+# sqrt(sum(differences^2)/length(differences))
+# sqrt(sum(differences.w1^2)/length(differences.w1))
+# ## using R functions
+# var(w)
+# var(w1)
+# sd(w)
+# sd(w1)
 # the results are slightly different because the R functions adopt a correction for finite samples
 
 ## standard error
@@ -151,7 +157,7 @@ sd(weight)/sqrt(119)
 
 # boxplot
 op <- par(mfrow=c(1,2))
-boxplot(y$footlength_mm, col = "lightgray", ylim=c(10,30))
+boxplot(y$footlength_mm, col = "lightgrey", ylim=c(10,30))
 # boxplot(log(y$footlength_mm), col = "lightgray")
 mtext("80", line=-1)
 points(x=29)
@@ -159,18 +165,14 @@ points(x=29)
 # points()
 
 # Cleveland plot/dotchart
-dotchart(y$footlength_mm)
+dotchart(y$footlength_mm) # simile a stripchart()
 par(op)
 par(mfrow=c(1,1))
 # identify the outlier
 plot(x=y$footlength_mm, y=y$capture_id)
-identify(x=y$footlength_mm, y=y$capture_id)
+identify(x=y$footlength_mm, y=y$capture_id) # punta col cursore sull'outlier per identificarlo
 # press Esc to stop the identify stuff
 y[102,]
-
-y$weight_g
-(y$weight_g)[y$weight_g > 30]
-
 
 ## ---- Handling data in a data frame - common operations ----
 

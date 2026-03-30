@@ -13,3 +13,9 @@ y$species # estrae la colonna species in un vettore
 
 mean(y$weight_g) # media della colonna peso, restituisce NA perchè trova dati mancanti
 mean(y$weight_g, na.rm = TRUE) # rimuove dal calcolo i dati assenti
+
+y$weight_g
+(y$weight_g)[y$weight_g > 50] # mostra solo i valori maggiori di 50 compresi NA
+
+y[1,] # prima riga del file (entry nr1)
+y[,3] # terza colonna del file (species)
