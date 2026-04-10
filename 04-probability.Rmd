@@ -11,7 +11,7 @@ output:
 # Understanding probability
 
 Let's roll a die...
-Chunk:
+
 ```{r}
 sample(x = 1:6, size = 5, replace = FALSE)
 sample(x = 1:6, size = 20, replace = TRUE)
@@ -182,7 +182,7 @@ These events are mutually exclusive, we can not get 1 in both rolls and 2 in bot
 
 # Conditional probability
 
-A conditional probability is the probability of an event X occurring when a secondary event Y is true. Mathematically, it is represented as P(X | Y). This is read as "probability of X given/conditioned on Y".
+A conditional probability is the probability of an event X occurring when a secondary event Y is true. Mathematically, it is represented as P(X | Y). This is read as "probability of X given/conditioned on Y". Si calcola come joint prob dei due eventi fratto la marginal dell'evento condizionante.
 
 
 
@@ -213,6 +213,9 @@ age.marginal.df <-
   ungroup() %>%
   mutate(prop = n/sum(n))
 age.marginal.df
+
+sum(y["age"] == "A") # quanti adulti sono stati catturati e registrati nel file
+
 ```
 
 And the probability of capturing a female snow vole is:

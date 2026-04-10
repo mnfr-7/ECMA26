@@ -24,16 +24,16 @@ I provided you a dataset called *captures.csv*. The data provide information on 
 
 ```{r}
 # Read captures.csv (name it 'captures')
-captures <- read.csv("data/captures.csv", sep=";")
+captures <- read.csv("data/captures.csv",sep=";")
 
 # Check the class of captures
-?class
+class(captures)
 
 # Check the dimensions of captures
-?dim()
+dim(captures)
 
 # View the column names of captures
-?names()
+names(captures)
 
 ```
 
@@ -52,10 +52,10 @@ You can use the *summary()* command to get a better feel for how your data are d
 
 ```{r}
 # Check the structure of captures
-
+str(captures)
 
 # View a summary of captures
-
+summary(captures)
 
 ```
 
@@ -84,25 +84,25 @@ For the moment, we will use the functions *hist()* and *plot()* to produce an hi
 
 ```{r}
 # Print captures to the console
-
+captures
 
 # View the first 6 rows
-
+head(captures)
 
 # View the first 15 rows
-
+head(captures, 15)
 
 # View the last 6 rows
-
+tail(captures)
 
 # View the last 10 rows
-
+tail(captures, 10)
 
 # Produce an histogram of weight
-
+hist(captures$weight)
 
 # Plot the capture ID no. towards the DOY
-
+plot(captures$capture_id, captures$DOY)
 
 
 ```
@@ -229,7 +229,7 @@ captures %>%
 # select columns from weight_g to footlenght_mm, excluding reproductive status
 captures %>% 
   select(weight_g:footlength_mm) %>% 
-  dplyr::select(-repr_status)
+  select(-repr_status)
 
 ```
 
@@ -243,7 +243,7 @@ For this purpose, in `dplyr` we couple two functions, `summarise()` and `group_b
 ```{r}
 captures %>% 
   group_by(sex) %>% 
-  summarise(media_peso = mean(weight_g, na.rm=TRUE))
+  summarise(mean(weight_g, na.rm=TRUE))
 ```
 
 ```{r}
@@ -320,13 +320,7 @@ See *?arrange* to order taking into account grouping (see example at the bottom 
 ```{r}
 # DO IT ON YOUR OWN
 ?arrange
-captures %>% 
-  group_by(sex) %>% 
-  arrange(desc(weight_g), .by_group = TRUE)
 
-# captures %>% 
-#   group_by(sex) %>% 
-#   arrange(desc(weight_g))
 
 ```
 

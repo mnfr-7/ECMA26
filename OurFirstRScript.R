@@ -207,10 +207,10 @@ y %>%
 # multiple operations
 y[,c("chip","trap_id")] %>% filter(trap_id > 65) %>% arrange(trap_id)
 dplyr::select(y, chip, trap_id)
-y %>% 
-  dplyr::select(chip, trap_id) %>% 
-  filter(trap_id > 65) %>% 
-  arrange(trap_id)
+y %>%                               # prendi y
+  dplyr::select(chip, trap_id) %>%  # seleziona solo le colonne chip e trap_id
+  filter(trap_id > 65) %>%          # filtra per mostrare solo trap_id > 65
+  arrange(trap_id)                  # ordina per trap_id crescente 
 
 # summarizing data within groups
 names(y)

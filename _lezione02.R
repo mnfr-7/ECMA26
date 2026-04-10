@@ -19,10 +19,13 @@ boxplot(arr1)
 # un boxplot ha il centro sulla mediana, il box tra il primo e terzo quantile 25-75 % dei dati
 # i baffi sono i valori meno probabili, gli outliers stanno di molto fuori (2 volte il baffo)
 
-sd(arr1, na.rm = TRUE) # deviazione standard σ
+sd(arr1, na.rm = TRUE) # deviazione standard σ, distanza tra la media e il primo punto
+                       # di flesso della curva di distribuzione
+                       # il 95% dei dati si trova tra -2σ e 2σ
+
 var(arr1, na.rm = TRUE) # varianza, che è semplicemente σ²
 
-sd(arr1, na.rm = TRUE)*sd(arr1, na.rm = TRUE) == var(arr1, na.rm = TRUE)
+# sd(arr1, na.rm = TRUE)*sd(arr1, na.rm = TRUE) == var(arr1, na.rm = TRUE)
 
 sd(arr1, na.rm = TRUE)/sqrt(length(na.omit(arr1))) # errore standard
                                                    # deviazione/radice del numero di valori
