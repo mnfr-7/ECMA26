@@ -21,7 +21,7 @@ boxplot(arr1)
 
 sd(arr1, na.rm = TRUE) # deviazione standard σ, distanza tra la media e il primo punto
                        # di flesso della curva di distribuzione
-                       # il 95% dei dati si trova tra -2σ e 2σ
+                       # il 95% dei dati si trova tra -2σ e 2σ (più precisamente tra -1.96σ e 1.96σ)
 
 var(arr1, na.rm = TRUE) # varianza, che è semplicemente σ²
 

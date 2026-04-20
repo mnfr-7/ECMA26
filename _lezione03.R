@@ -1,6 +1,6 @@
 rm(list = ls()) # pulisce l'environment
 
-# GUARDA FILE 04-probability.R
+# GUARDA FILE 04-probability.Rmd
 
 sample(1:6, size = 10, replace = TRUE) # genera un campione di 10 numeri compresi tra 1 e 6
                                        # replace TRUE ammette valori ripetuti

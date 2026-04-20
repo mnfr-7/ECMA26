@@ -1,0 +1,58 @@
+---
+title: "Snow Vole Captures - ggplot2"
+output:
+  word_document: 
+    toc: yes
+    fig_caption: yes
+  html_document:
+    df_print: paged
+---
+
+Dataset: Snow Vole Captures (Chionomys nivalis)
+
+```{r}
+captures <- read.csv("data/captures.csv", sep=";")
+
+captures <- subset(captures, sex %in% c("M", "F"))
+
+library("ggplot2")
+```
+
+Objective: Use the ggplot2 package to explore the morphological traits and population structure of the snow vole.
+
+Task 1: Weight vs. Foot Length (Scatter Plot).
+Investigate if heavier individuals have longer feet.
+
+```{r}
+t1 = ggplot(captures, aes(x = weight_g, y = footlength_mm, color = sex)) + geom_point(na.rm = TRUE) + geom_smooth(se=FALSE, method = "lm", na.rm = TRUE) + ggtitle("Relationship Between Weight and Foot Length") + xlab("Weight [g]") + ylab("Foot Length [mm]")
+
+ggsave("output/weight_footlength_scatter.png", t1)
+
+t1
+```
+
+The data shows a positive relationship between the foot length and the weight of the captured Snow Voles, this goes for males and females both.
+
+Task 2: Weight Distribution (Histogram).
+Analyze how weight is distributed across the population.
+
+```{r}
+t2 = ggplot(captures, aes(x = weight_g)) + geom_histogram(na.rm = TRUE, binwidth = 2) + facet_wrap("session", scale = "free_y") + ggtitle("Weight Distribution In Each Capture Session") + xlab("Weight [g]") + ylab("Frequency")
+
+ggsave("output/weight_hist.png", t2)
+
+t2
+```
+
+Task 3: Comparing Sex and Age (Boxplot).
+Check for sexual dimorphism or differences between adults and juveniles.
+
+```{r}
+t3 = ggplot(captures, aes(x = age, y = weight_g, fill = sex)) + geom_boxplot(na.rm = TRUE) + ggtitle("Sexual Dimorphism Across Age Groups") + xlab("Age") + ylab("Weight [g]")
+
+ggsave("output/weight_age_box.png", t3)
+
+t3
+```
+
+The heaviest group is the one for adult males. Some outliers in the juvenile group, also interesting the fact that there's only one confirmed juvenile female captured.

@@ -118,7 +118,7 @@ dati2 %>%
 dati2 %>%
   filter(sex == "M") -> datiM
 
-dataset <- datiM
+dataset <- datiF
 
 boot.data <- boot(dataset$weight_g,
                   function(x,i) mean(x[i]), 
