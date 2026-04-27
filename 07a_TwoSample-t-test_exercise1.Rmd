@@ -32,7 +32,6 @@ shapiro.test(x)
 shapiro.test(y)
 ```
 
-
 ```{r}
 # homogeneity of variances
 var(x)/var(y)
@@ -40,9 +39,9 @@ var.test(x,y)
 ```
 
 ```{r}
-#t-test
+# t-test
 t.test(x,y,
-       paired = FALSE,
+       paired = FALSE,            # campioni INDIPENDENTI, si comparano le medie calcolate indipendentemte
        var.equal = TRUE,
        alternative = "two.sided")
 ```

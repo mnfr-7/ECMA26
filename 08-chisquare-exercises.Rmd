@@ -97,8 +97,8 @@ birds_habitats <- data.frame(
                "Golgen-crowded sparrow", "Bushtit", "Song sparrow", "Spotted towhee",
                "Bewick's wren", "Hermit thrush", "Dard-eyed junco",
                "Lesser goldfinch", "Uncommon"),
-  Remnant = c(677, 408, 270, 300, 198, 150, 137, 106, 119, 34, 57, 457),
-  Restored = c(198, 260, 187, 89, 91, 50, 32, 48, 24, 39, 15, 125)
+  Remnant = c(677, 408, 270, 300, 198, 150, 137, 106, 119, 34, 57, 457), # habitat indisturbati
+  Restored = c(198, 260, 187, 89, 91, 50, 32, 48, 24, 39, 15, 125) # habitat ripristinati 
 )
 birds_habitats
 ```

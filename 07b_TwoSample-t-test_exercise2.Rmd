@@ -40,9 +40,8 @@ var.test(x,y)
 
 ```{r}
 # t-test
-#t-test
 t.test(x,y,
-       paired = TRUE,
+       paired = TRUE,             # campioni DIPENDENTI tra loro, si comparano dati appaiati
        var.equal = TRUE,
        alternative = "two.sided")
 ```

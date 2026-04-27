@@ -68,4 +68,8 @@ boot.ci(boot.data, conf = 0.95) # intervalli di confidenza al 95% (senza t di St
 
 t.test(dati$footlength_mm ~ dati$sex, var.equal = TRUE) # il t-test cambia se le varianze tra i due dataset differiscono
 
+# il t-test a due code verifica se i dati differiscono senza direzione, il campo di rifiuto di H0 è 5% (2.5 in ogni coda)
+# il t-test a una coda invece ha direzione ma il campo rimane 5%, quindi è più facile rifiutare H0
+# in campo di ricerca solitamente si usa quello a due code perchè più restrittivo
+
 # CONTINUA SU 06a, 07a e 07b per lezione sui T Test
