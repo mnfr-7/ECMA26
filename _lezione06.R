@@ -12,6 +12,8 @@
 
 # i parametri esatti sono β, le stime statistiche di quegli stessi parametri sono indicate b0 e b1
 
+# !!!      RICORDA: p-value alto (>0.05) = si "accetta" H0, p-value basso (<0.05) = H0 si rifiuta      !!!
+
 cars.lm <- lm(dist ~ speed, data = cars) # calcolo retta di regressione, funzione "linear model" 
 
 names(cars.lm)
@@ -28,3 +30,6 @@ summary(cars.lm)
 
 # CONTINUA SU 09-SLR.Rmd e 10-SLR-exercises.Rmd
 
+# Per le analisi di regressione ricorda gli assunti
+# Devono essere normali i RESIDUI (quindi la variabile y)
+# Non ci interessa invece la distribuzione delle variabili x (entro limiti estremi)

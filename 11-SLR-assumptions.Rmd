@@ -104,7 +104,8 @@ bptest(cars.lm)
 
 A **standardized residual** is the raw residuals divided by an overall standard deviation of the raw residuals.
 
-## BoxCox transformation
+## BoxCox transformation 
+Si può usare solo per variabili quantitative continue, restituisce un valore che è l'esponente migliore al quale elevare la variabile (in questo caso volume) per migliorarne la distribuzione
 
 ```{r boxcox}
 

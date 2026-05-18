@@ -52,9 +52,10 @@ We look at the data:
 
 ```{r}
 head(Boston)
+?Boston
 ```
 
-We select the predictor variables:
+We select the predictor variables (le possibili variabili x esplicative, medv è la y):
 
 ```{r}
 pred <- dplyr::select(Boston, crim:lstat)
@@ -73,7 +74,6 @@ And we can visualize it:
 
 ```{r}
 ggcorrplot(cor.matrix)
-ggcorrplot(cor(pred))
 ```
 
 Just a different visualization:
@@ -99,6 +99,7 @@ p.mat
 ```{r}
 # Argument p.mat
 # Barring the significant coefficients
+# Segna le correlazioni >0.7 come richiesto in p.mat
 ggcorrplot(cor.matrix,
   hc.order = TRUE, method = "circle",
   type = "lower", p.mat = p.mat
@@ -117,10 +118,13 @@ The following regression model include all predictor variables:
 
 ```{r}
 # Build the model
-model1 <- lm(medv ~ ., data = Boston)
+model1 <- lm(medv ~ ., data = Boston) # il punto vuol dire TUTTE le altre variabili nel dataset
 summary(model1)
 ```
 
+I p-value non sono attendibili finchè non si verifica la collinearità tra le variabili (correlazioni)
+
+Il variance inflation factor verifica di quanto sono sbagliati i valori di errore standard per quella data variabile (alto VIF = forte correlazione con altre variabili = stima dell'errore standard falsata)
 
 The R function `vif()`, in the `car` package, can be used to detect multicollinearity in a regression model:
 
@@ -142,7 +146,7 @@ View(pollution)
 In multiple regression, it is always a good idea to use pairs to look at all the correlations:
 
 ```{r}
-pairs(pollution,panel=panel.smooth)
+pairs(pollution, panel=panel.smooth)
 ```
 
 Check for relevant correlations and visualize them. Compute the variance inflation factor and update the model accordingly.
@@ -169,3 +173,4 @@ model1 <- lm(Pollution ~ Temp + Industry + Wind + Rain + Wet.days, data = pollut
 summary(model1)
 ```
 
+In questo caso la correlazione tra industry e population aveva gonfiato l'errore standard relativo a quelle variabili, questo potrebbe in alcuni casi (non in questo) mascherare la significatività di una variabile
