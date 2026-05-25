@@ -91,7 +91,9 @@ head(dati.mod.new2)
 ## Analyse correlations
 
 ```{r}
+library(ggcorrplot)
 cor(varexpl)
+ggcorrplot(cor(varexpl), method = "circle")
 ```
 
 
@@ -131,16 +133,26 @@ summary(fm1.pois)
 
 Now, try to reduce the number of variables in the model - different models can be compared in terms of AIC:
 
+RICORDA SEMPRE: i modelli si costruiscono su ipotesi direlazioni ECOLOGICHE, non guardando solo la significatività (AIC più basso è meglio)
+ad esempio si può partire dal beyond optimal (con tutte le x possibili eccetto quelle correlate) e da lì creare un certo num di modelli su ipotesi diverse
+
+modello topografico: le catture sono influenzate soprattutto dalla topografia del terreno (Incl, Alt, Esp.tr)
+modello trofico: le catture sono influenzate solo dalla disponibilità di cibo (copveg)
+modello predatori: le catture sono infliuenzate dalla presenza di ripari (mediana.rocce, sd.rocce)
+
+in ogni caso però, si mostra l'output del modello migliore MA si citano tutti i modelli utilizzati senza scartarli del tutto
+
 ```{r}
 # UP TO YOU!!!
 
-fm1.noexp <- glm(CattSiNo ~ Incl +
-             Alt,
-             #copveg,
+fm1.noexp <- glm(CattSiNo ~
+              Incl +
+              Alt,
+             # copveg +
              # NSpecie +
              # media.rocce +
-             #mediana.rocce,
-             # sd.rocce, #
+             # mediana.rocce +
+             # sd.rocce +
              # Esp.tr,
            family=binomial, data=dati.mod.new)
 #, offset=Noccasioni)

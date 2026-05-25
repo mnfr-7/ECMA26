@@ -31,12 +31,19 @@ mod <- lm(weight ~ group, data = plant.df)
 summary(mod)
 ```
 
-```{r}
+Inctroducendo la variabile gruppo migliora l'analisi di regressione? Sì perchè ci sono differenze di volume a seconda del tipo di trattaento
 
+```{r}
+anova.weight <- aov(weight ~ group, data = plant.df)
+summary(anova.weight)
+
+# un altro modo per fare la stessa cosa
+anova(lm(weight ~ group, data = plant.df))
 ```
 
 ```{r}
-
+mod <- lm(weight ~ group, data = plant.df)
+summary(mod)
 ```
 
 ```{r}
