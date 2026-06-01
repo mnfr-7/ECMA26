@@ -43,7 +43,7 @@ colMeans(dati)
 boxplot(dati)
 ```
 
-## Change the data format
+## Change the data format (da "wide data" a "long data")
 
 ```{r}
 soil.type <- c(rep("sand",10),
@@ -57,11 +57,11 @@ dati.new
 ## Check for heteroschedasticity
 
 ```{r}
-by(dati.new$yields, dati.new$soil.type, var)
-fligner.test(yields ~ soil.type, data=dati.new)
+by(dati.new$yields, dati.new$soil.type, var) # restituisce le varianze per ogni soil.type
+fligner.test(yields ~ soil.type, data=dati.new) # test specifico che verifica omogeneità
 ```
 
-There is no evidence of any significant difference in variance across the three samples, so it is legitimate to continue with the analysis.
+There is *no evidence of any significant difference* in variance across the three samples, so it is legitimate to continue with the analysis. Quindi va bene considerare le varianze omogenee.
 
 ## Continue with the analysis of variance
 
@@ -70,15 +70,19 @@ anova.yields <- aov(yields ~ soil.type, data=dati.new)
 summary(anova.yields)
 ```
 
+C'è almeno un tipo di suolo con resa diversa rispetto gli altri due.
+
 ```{r}
-anova(lm(yields ~ soil.type, data=dati.new))
+anova(lm(yields ~ soil.type, data=dati.new)) 
+# fa la stessa cosa di prima solo un altro modo di scriverlo
 ```
 
 ## Graphically check for the assumptions
 
 ```{r}
 anova.yields <- aov(yields ~ soil.type, data=dati.new)
-plot(anova.yields)
+plot(anova.yields) # stessi grafici che si ottengono da un modello di regressione lineare
+# il Q-Q plot ci assicura che i residui della varianza hanno distribuzione normale
 ```
 
 The first plot check the most important assumption of constancy of variance: there should be no pattern in the residuals against the fitted values, and, indeed, there is none.   
@@ -86,26 +90,40 @@ The second plot tests the assumption of normality of errors: there should be a s
 The third plot shows that the residuals are well behaved.   
 The fourth plot shows that there are no highly influential values that might be distorting the parameter estimates. 
 
-## Fit a linear model to the data to find out between which soil types the differences are actually significant
+## Fit a linear model to the data to find out between which soil types the differences are actually significant, due modi per procedere
 
 ```{r}
 mod <- lm(yields ~ soil.type, data=dati.new)
 summary(mod)
 ```
 
+soil.type clay è stato inglobato nell'intercetta e diventa quindi il soil.type contro il quale vengono confrontati sia sand che loam, Rprende come riferimento sempre il PRIMO IN ORDINE ALFABETICO.
+l'output ci dice che tra sand e clay non si trova differenza significativa sulla resa, invece si trova una differenza QUASI significativa tra loam e clay.
+
 ```{r}
 dati.relevel <- dati.new
-dati.relevel$soil.type <- relevel(dati.relevel$soil.type, ref="sand")
+dati.relevel$soil.type <- relevel(as.factor(dati.relevel$soil.type), ref="sand") 
+# si riordano i dati per usare sand come riferimento per il confronto, bisogna usare as.factor() per rendere noto ad R di trattare soil.type come un fattore e non delle stringhe
+
 mod.relevel <- lm(yields ~ soil.type, data=dati.relevel)
 summary(mod.relevel)
 ```
 
+Questo test di Tuckey permette di verificare tutti i possibili confronti a coppie e restituisce quali sono significativi, calcolando le differenze tra le rese.
+Ci dice la differenza, l'intervallo di confidenza e un p-value aggiustato (si usa sempre il cut off 0.05), nel background in realtà il valore soglia in questo caso dovrebbe essere 0.05 diviso il numero di possibili confronti a coppie (in questo caso 3), questa severità è necessaria perchè man mano che si testano possibili coppie diventa più probabile trovare p-value sotto 0.05
+*Per questo il p-value è "aggiustato"*
 
 ```{r}
 # Tukey Honestly Significant Differences
 TukeyHSD(anova.yields) # where anova.yields comes from aov()
-plot(TukeyHSD(anova.yields))
+plot(TukeyHSD(anova.yields)) 
+# nota che solo la coppia sand-loam non interseca lo zero (statisticamente significativo)
 ```
+
+Il test di bonferroni è il metodo più severo possiibile per cercare significatività a coppie. *Il p-value è già aggiustato su un valore soglia ancora minore rispetto a Tuckey*
+
+In generale di solito è sufficiente il test di Tuckey, bonferroni è un po' overkill a meno che non si stia difendendo una teoria controversa.
+
 ```{r}
 pairwise.t.test(dati.new$yields, dati.new$soil.type, p.adjust.method = "bonferroni")
 ```

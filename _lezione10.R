@@ -14,4 +14,14 @@
 # ANOVA one way per una variabile continua (Y) espressa su 3 livelli (3 possibili valori per le var discrete)
 # ANOVA two way o three way per un maggior numero di livelli che le variabili discrete possono assumere
 
-# continua su 14-OneWayANOVA e 15-OneWayANOVA-cropyields
+# continua su 14-OneWayANOVA
+
+# in Slides09 si trovano le trasformazioni logit per trasformare le equazioni adattandole a diverse distribuzioni
+# occhio che la link function è per det le X esplicative, la funzione di Y è la "mean function"
+
+# riprendiamo da 15-OneWayANOVA-cropyields e Slides10
+
+# se invece l'analisi ha due o più fattori, tutti multi livello l'analisi si complica perchè aumentano
+# le possibili combinazioni
+
+# continua su 17-interactions

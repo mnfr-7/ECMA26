@@ -34,8 +34,7 @@ table(weights$diet, weights$supplement)
 
 
 ```{r}
-with(weights,
-     coplot(gain ~ diet|supplement,rows=2))
+# with(weights, coplot(gain ~ diet|supplement,rows=2))
 ```
 
 We will perform an analysis of variance including a factor for the interaction between diet and supplement:
@@ -48,10 +47,10 @@ summary(model)
 The ANOVA table shows that there is no hint of any interaction between the two
 explanatory variables (p=0.917): the effects of diet and supplement are additive.    
 
-Let's check for this graphically...
+Let's check for this graphically, se le rette NON si intersecano vuol dire che l'interazione NON è signiifcativa.
 
 ```{r}
-weights$diet <- relevel(weights$diet, ref="oats")
+weights$diet <- relevel(as.factor(weights$diet), ref="oats")
 with(weights, interaction.plot(diet,supplement, response = gain))
 ```
 
@@ -76,7 +75,8 @@ summary.lm(model)
 summary.lm(model2)
 ```
 
-We can compare them directly:
+We can compare them directly, confrontando le varianze tra i due modelli: 
+
 ```{r}
 anova(model,model2)
 ```
@@ -92,18 +92,15 @@ Let's check with a TukeyHSD test:
 
 ```{r}
 TukeyHSD(model2)
-```
-
-
-```{r}
 plot(TukeyHSD(model2))
 ```
 
 Other plots using the jtools package:
+
 ```{r}
 library(sjPlot)
 # plot_model(model2, type = "diag")
-plot_model(model2, type="eff")
+plot_model(model2, type="eff", terms = c("diet"))
 ```
 
 check here for an example with a significant interaction: https://cran.r-project.org/web/packages/jtools/vignettes/categorical.html
@@ -124,6 +121,7 @@ Please note that here we use `lm` rather than `aov`:
 
 ```{r}
 fitiris <- lm(Petal.Length ~ Petal.Width * Species, data = iris)
+summary(fitiris)
 library(jtools)
 plot_model(fitiris, type="int")
 ```

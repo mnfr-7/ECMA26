@@ -7,21 +7,27 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+```{r}
+data(iris)
+head(iris)
+```
 
 ## prcomp
 
 ```{r prcomp}
+res.prcomp <- prcomp(iris[,-5]) # toglie variabile Species
+summary(res.prcomp) 
+# proporzione di varianza spiegata da PC1 è circa il 92% del tot, guardando la cumulativa invece con 3 componenti principali si cattura il 99% della varianza totale, con solo PC1 e PC2 si cattura il 98%
+# quindi si può dimezzare la dimensione del problema con una perdita solo del 2% di variabilità (da 4 variabili a 2 componenti principali)
 
-res.prcomp <- prcomp(iris[,-5])
-summary(res.prcomp)
 # compare to:
-res.prcomp <- prcomp(iris[,-5], center=TRUE, scale=TRUE)
-summary(res.prcomp)
-plot(res.prcomp)
-biplot(res.prcomp)
-res.prcomp$rotation
-biplot(res.prcomp, choices=3:4)
+res.prcomp <- prcomp(iris[,-5], center=TRUE, scale=TRUE) # standardizzando le X
+summary(res.prcomp) # risultati più cauti, solo 96% del tot rappresentata con 2 componenti
 
+plot(res.prcomp)
+biplot(res.prcomp) # default plotta PC1 e PC2 soltanto
+res.prcomp$rotation
+biplot(res.prcomp, choices=3:4) # plotta PC3 e PC4 (non significative per spiegare i dati)
 ```
 
 The output contains the following values:
