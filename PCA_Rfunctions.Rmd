@@ -95,11 +95,11 @@ get_eig(res.pca) # Extract eigenvalues/variances
 sqrt(get_eig(res.pca)[,1]) # compare to summary(res.prcomp)
 
 # Visualize eigenvalues/variances
-fviz_eig(res.pca, addlabels=TRUE, hjust = -0.3)+
+fviz_eig(res.pca, addlabels=TRUE, hjust = -0.5)+
   theme_minimal()
 
 # export all results in csv file
-write.infile(res.pca,file="my_FactoMineR_results.csv")
+write.infile(res.pca, file="my_FactoMineR_results.csv")
 
 ```
 
@@ -111,7 +111,7 @@ write.infile(res.pca,file="my_FactoMineR_results.csv")
 # Extract the results for variables
 var <- get_pca_var(res.pca)
 var
-# Contribution of variables
+# Contribution of variables to the new PCA elements
 var$contrib
 colSums(var$contrib)
 # correlation of variables with the first 4 PC
@@ -171,6 +171,8 @@ fviz_pca_ind(res.pca, repel = TRUE)+
 
 # Color by groups: habillage=iris$Species
 # Show points only: geom = "point"
+# Group based on species: habillage=iris$Species, addEllipses=TRUE
+# Ellipses at 95% leave out the 5% outliers
 p <- fviz_pca_ind(res.pca, geom = "point",
     habillage=iris$Species, addEllipses=TRUE,
     ellipse.level= 0.95)+ theme_minimal()
@@ -178,8 +180,8 @@ print(p)
 
 # Change group colors manually
 # Read more: http://www.sthda.com/english/wiki/ggplot2-colors
-p + scale_color_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
- scale_fill_manual(values=c("#999999", "#E69F00", "#56B4E9"))+
+p + scale_color_manual(values=c("violet", "orange", "steelblue"))+
+ scale_fill_manual(values=c("violet", "orange", "steelblue"))+
  theme_minimal()
 
 ```
