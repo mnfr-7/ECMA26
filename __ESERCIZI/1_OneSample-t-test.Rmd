@@ -1,0 +1,61 @@
+---
+title: "One sample t-test example"
+output: html_notebook
+---
+
+# Problem
+
+Consider the variable **rat**. It is included in the **UsingR** package so you have to load it first.
+
+* Describe and plot its distributions, then assess departure from normality using an appropriate test and plot.
+* Based on the results of the normality test, could you perform a t-test to assess whether the sample mean is significantly larger than 110?
+* Comment on the results and compare them to the results of the corresponding non-parametric test.
+
+
+# Solution
+
+```{r package, message=FALSE}
+#install.packages("UsingR")
+library(UsingR)
+```
+
+
+```{r}
+# load the data
+data(rat)
+```
+
+```{r}
+# histogram
+hist(rat)
+```
+
+```{r}
+# stripcharts
+stripchart(rat)
+stripchart(rat, method = "stack")
+stripchart(rat, method = "jitter")
+```
+
+```{r}
+# boxplot
+boxplot(rat)
+```
+
+```{r}
+# normality test
+shapiro.test(rat)
+qqnorm(rat); qqline(rat)
+```
+
+
+
+```{r}
+t.test(rat, mu=110, alternative="greater")
+```
+
+
+
+```{r}
+wilcox.test(rat, mu=110, alternative="greater")
+```

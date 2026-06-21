@@ -1,0 +1,46 @@
+---
+title: "Two sample t-test example"
+output: html_notebook
+---
+
+# Problem
+
+Suppose the recovery time for patients taking a new drug is measured. A placebo group is also used to avoid the placebo effect. The data are as follows:
+
+```{r}
+x <- c(15,10,13,7, 9,8,21,9,14,8)
+y = c(15, 14, 12, 8, 14, 7, 16, 10, 15, 12)
+```
+
+We want to compare the means of the two groups to verify whether they are equal or not.   
+Verify the t-test assumptions, and then proceed with the t-test if appropriate. Which is the corresponding non-parametric test? Perfom it and compare the results to the one obtained with the t-test.
+
+# Solution
+
+```{r}
+# normality test
+par(mfrow=c(1,2))
+qqnorm(x); qqline(x, col="red")
+qqnorm(y); qqline(y, col="red")
+shapiro.test(x)
+shapiro.test(y)
+```
+
+
+```{r}
+# homogeneity of variances
+boxplot(x,y)
+var.test(x,y)
+```
+
+```{r}
+t.test(x,y)
+```
+
+```{r}
+t.test(x,y,alt="less",var.equal=TRUE)
+```
+
+```{r}
+wilcox.test(x,y)
+```

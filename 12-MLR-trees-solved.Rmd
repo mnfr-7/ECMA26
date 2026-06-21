@@ -131,7 +131,7 @@ summary(mod.int)
 
 ```{r trees-regression2}
 # prova con mod.int o mod.q
-mod <- mod.int
+mod <- mod.q
 plot(mod)
 plot(trees$Volume ~ trees$Girth)
 plot(trees$Volume ~ trees$Height)

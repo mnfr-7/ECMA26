@@ -1,0 +1,300 @@
+---
+title: "Esercizi"
+output: html_notebook
+---
+
+## LIBRERIE
+```{r}
+library(UsingR)
+library(MASS)
+library(car)
+library(dplyr)
+library(ggcorrplot)
+library(sjPlot)
+```
+
+##ES1 - one sample ttest
+```{r}
+data(rat) # from UsingR
+
+hist(rat)
+stripchart(rat, method = "stack")
+boxplot(rat)
+
+qqnorm(rat); qqline(rat)
+shapiro.test(rat) # test normality
+
+t.test(rat, mu=110, alternative="greater") # parametric 
+
+wilcox.test(rat, mu=110, alternative="greater") # non parametric 
+```
+
+##ES2 - two sample ttest
+```{r}
+# independant samples
+x <- c(15,10,13,7, 9,8,21,9,14,8)
+y <- c(15, 14, 12, 8, 14, 7, 16, 10, 15, 12)
+
+# normality
+qqnorm(x); qqline(x, col="red")
+qqnorm(y); qqline(y, col="red")
+shapiro.test(x) #ok
+shapiro.test(y) #ok
+
+# homogeneity of variances
+boxplot(x,y)
+var.test(x, y) #ok, valid for normally distributed data in only two groups
+
+t.test(x, y)
+t.test(x, y, alt="less", var.equal=TRUE)
+
+wilcox.test(x, y)
+
+#-------------------------------------------------------------------
+
+# paired samples
+x <- c(3, 0, 5, 2, 5, 5, 5, 4, 4, 5)
+y <- c(2, 1, 4, 1, 4, 3, 3, 2, 3, 5)
+
+# normality
+qqnorm(x); qqline(x, col="red")
+qqnorm(y); qqline(y, col="red")
+shapiro.test(x) # distribution is not normal (p-value<0.05)
+shapiro.test(y) #ok
+
+# homogeneity of variances
+boxplot(x,y)
+var.test(x, y) #ok
+
+t.test(x, y, paired=TRUE, var.equal=TRUE)
+
+wilcox.test(x, y, paired=TRUE)
+```
+
+##ES3 - chi square
+```{r}
+# goodness of fit - do the counts fit the expected probabilities/proportions
+freq <- c(53, 22, 49)
+probs <- c(5/12, 3/12, 4/12) 
+chisq.test(freq, p = probs)
+
+# independence - are two variables independent from each other
+nonblock <- c(18, 15, 5, 8, 4)
+block <- c(10, 5, 7, 18, 10)
+chisq.test(data.frame(nonblock, block))
+
+# homogeneity - do the variables come from the same distribution
+none <- c(67, 42, 75, 56, 57)
+minor <- c(10, 6, 8, 4, 15)
+major <-  c(5, 5, 4, 6, 1)
+names <- c("under 18", "18-25", "26-40", "40-65", "over 65")
+data.frame(names, none, minor, major)
+
+chisq.test(rbind(none, minor, major))
+```
+
+##ES4 - linear regression
+```{r}
+data(cats)
+head(cats)
+
+# x, y
+plot(cats$Bwt, cats$Hwt)
+
+# are body weight and heart weight correlated?
+cor(cats$Bwt, cats$Hwt)
+cor.test(cats$Bwt, cats$Hwt) #yes
+
+# normality for y
+qqnorm(cats$Hwt); qqline(cats$Hwt, col="red")
+shapiro.test(cats$Hwt)
+
+# linear regression (y ~ x)
+mod <- lm(Hwt ~ Bwt, data=cats)
+summary(mod)
+
+plot(cats$Bwt, cats$Hwt); abline(coef(mod), col="red")
+plot(mod)
+```
+
+##ES5 - anova
+```{r}
+data(PlantGrowth)
+plant.df <- PlantGrowth
+
+plant.df$group = factor(plant.df$group, labels = c("Control", "Treatment 1", "Treatment 2"))
+
+boxplot(weight ~ group, data = plant.df)
+
+mod <- lm(weight ~ group, data = plant.df)
+summary(mod)
+
+plant.df$group <- relevel(plant.df$group, ref="Treatment 1")
+mod <- lm(weight ~ group, data = plant.df)
+summary(mod)
+
+anova.weight <- aov(weight ~ group, data = plant.df)
+summary(anova.weight)
+#or
+anova(mod)
+```
+
+#ES6 - anova crop yields
+```{r}
+sand <- c(6,10,8,6,14,17,9,11,7,11)
+clay <- c(17,15,3,11,14,12,12,8,10,13)
+loam <- c(13,16,9,12,15,16,17,13,18,14)
+
+data.yields <- data.frame(sand,clay,loam) #wide data
+data.yields
+
+#means and boxplot
+colMeans(data.yields)
+boxplot(data.yields)
+
+#wide to long form data
+soil.type <- as.factor(
+               c(rep("Sand", length(sand)), 
+                 rep("Clay", length(clay)), 
+                 rep("Loam", length(loam))))
+crop.yields <- c(sand, clay, loam)
+
+yields.df <- data.frame(soil.type, crop.yields) #new dataframe, long data
+yields.df
+
+#use Sand as reference 
+yields.df$soil.type <- relevel(yields.df$soil.type, ref="Sand")
+
+#means and boxplot again
+by(yields.df$crop.yields, yields.df$soil.type, mean)
+boxplot(crop.yields ~ soil.type, data=yields.df)
+
+#check homogeneity of variances, can't use var.test because there's 3 groups
+fligner.test(crop.yields ~ soil.type, data=yields.df) #ok
+
+mod <- lm(crop.yields ~ soil.type, data=yields.df)
+summary(mod)
+
+anova.yields <- aov(crop.yields ~ soil.type, data=yields.df)
+
+plot(anova.yields)
+
+TukeyHSD(anova.yields)
+```
+
+##ES7 - interaction
+```{r}
+weights <- read.csv("../data/growth2.txt", sep="\t")
+head(weights)
+
+table(weights$diet, weights$supplement) #factor diet (3 lvls), and factor supplement (4 lvls)
+
+weights$diet <- relevel(as.factor(weights$diet), ref="oats")
+with(weights, interaction.plot(diet, supplement, response = gain))
+
+mod <- aov(gain ~ diet*supplement, data=weights)
+summary(mod) #no interaction between diet and supplement
+
+mod2 <- aov(gain ~ diet+supplement, data=weights)
+summary(mod2)
+
+summary.lm(mod)
+summary.lm(mod2) #simpler
+
+anova(mod, mod2) # and not significantly worse
+
+TukeyHSD(mod2)
+plot(TukeyHSD(mod2))
+```
+
+##ES9 - interactions
+```{r}
+pollution <- read.table("../data/sulphur.dioxide.txt", header=TRUE)
+
+#correlation between possible explanatory x
+x.expl <- dplyr::select(pollution, Temp:Wet.days)
+cor.matrix <- cor(x.expl)
+ggcorrplot(cor.matrix, type = "lower", p.mat=abs(cor.matrix)>0.7) #population and industry
+
+mod <- lm(Pollution ~ Temp+Industry+Wind+Rain+Wet.days, data=pollution)
+summary(mod)
+
+mod.q <- lm(Pollution ~ Temp + I(Temp^2)
+                        +Industry + I(Industry^2)
+                        +Wind + I(Wind^2)
+                        +Rain + I(Rain^2)
+                        +Wet.days + I(Wet.days^2), data=pollution)
+summary(mod.q)
+
+mod.int <- lm(Pollution ~ Temp+Wind*Rain+Industry+Wet.days, data=pollution)
+summary(mod.int)
+
+mod.final <- lm(Pollution ~ Temp+Wind*Rain+Industry, data=pollution)
+summary(mod.final)
+
+AIC(mod); AIC(mod.q); AIC(mod.int); AIC(mod.final)
+
+plot(mod.final)
+plot(pollution$Pollution ~ pollution$Temp+pollution$Wind*pollution$Rain+pollution$Industry)
+
+plot_model(mod.final)
+
+plot_model(mod.final, type = "eff", terms = c("Rain","Wind")); plot_model(mod.final, type = "eff", terms = "Temp"); plot_model(mod.final, type = "eff", terms = "Industry")
+
+```
+
+##ES8 - covariance, ancova X
+```{r}
+regrowth <- read.table("../data/ipomopsis.txt", sep="\t", header=T) 
+head(regrowth) #missing file
+```
+
+##ES10 - covariance crickets X
+```{r}
+crickets <- read.table("../data/covariance_crickets.txt", sep=";", header = T)
+head(crickets) #missing file
+```
+
+##ES11 - glm
+```{r}
+donner <- read.table("../data/donner.txt", header = TRUE)
+head(donner)
+
+donner$survive <- donner$survive == 1
+
+case_when(
+  donner$sex == 0 ~ "Female",
+  donner$sex == 1 ~ "Male"
+) -> donner$sex
+
+head(donner)
+
+table(donner$sex, donner$survive)
+
+chisq.test(donner$sex, donner$survive)
+
+mod <- lm(survive ~ age, data=donner); summary(mod)
+
+plot(donner$survive ~ donner$age); abline(coef(mod), col="red")
+plot_model(mod, type="eff", terms=c("age"))
+
+mod.f <- lm(survive ~ age + sex, data=donner); summary(mod.f)
+
+AIC(mod); AIC(mod.f)
+
+case_when(
+  donner$sex == "Female" ~ dplyr::select(donner, c(age, survive))
+) -> donner.f
+case_when(
+  donner$sex == "Male" ~ dplyr::select(donner, c(age, survive))
+) -> donner.m
+
+mod.male <- lm(survive ~ age, data=donner.m); summary(mod.male)
+mod.female <- lm(survive ~ age, data=donner.f); summary(mod.female)
+
+plot_model(mod.male, type="eff", terms="age", col="blue"); plot_model(mod.female, type="eff", terms="age")
+
+mod.int <- lm(survive ~ age*sex, data=donner); summary(mod.int)
+plot_model(mod.int, type="eff", terms=c("age", "sex"))
+```
+

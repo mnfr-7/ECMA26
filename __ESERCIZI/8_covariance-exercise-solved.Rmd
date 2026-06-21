@@ -1,0 +1,182 @@
+---
+title: "Exercise - analysis of covariance (ANCOVA)"
+output: 
+  html_notebook: 
+    toc: yes
+    toc_float: yes
+  html_document: 
+    theme: paper
+    toc: yes
+    toc_float: yes
+---
+
+(Source: Crawley, The R book)
+
+# Definition
+
+Analysis of covariance (ANCOVA) combines elements from regression and analysis of
+variance. The response variable is continuous, and there is at least one continuous explanatory
+variable and at least one categorical explanatory variable.
+
+# Example
+
+Our worked example concerns an experiment on the
+impact of grazing on the seed production of a biennial plant.    
+Forty plants were allocated to
+two treatments, grazed and ungrazed, and the grazed plants were exposed to rabbits during
+the first two weeks of stem elongation. They were then protected from subsequent grazing
+by the erection of a fence and allowed to regrow. Because initial plant size was thought
+likely to influence fruit production, the diameter of the top of the rootstock was measured
+before each plant was potted up. At the end of the growing season, the fruit production (dry
+weight in milligrams) was recorded on each of the 40 plants, and this forms the response
+variable in the following analysis.   
+
+The object of the exercise is to estimate the parameters of the minimal adequate model
+for these data.
+
+
+```{r}
+regrowth <- read.table("data/ipomopsis.txt", sep="\t", header=T)
+head(regrowth)
+```
+
+* Describe the dataset and look at the distribution of the dependent variable.
+* Inspect the data plotting fruit production against root size for each of the two treatments separately
+* Calculate the mean fruit production for grazed and ungrazed plants and plot the data: are the means statistically different? Specify the null and alternative hypothesis and test using a t-test
+* Now fit a regression model including both Root and Grazing as explanatory variables and comment on the results.
+* Try to remove the interaction terms and compare the first and second model through an ANOVA table.
+* Further simplify the model removing Grazing and compare again through an ANOVA table.
+* Compare the models using the *step* function.
+
+## Describe the dataset and look at the distribution of the dependent variable
+
+```{r}
+str(regrowth)
+```
+
+```{r}
+hist(regrowth$Fruit)
+shapiro.test(regrowth$Fruit)
+qqnorm(regrowth$Fruit);qqline(regrowth$Fruit)
+```
+
+```{r}
+summary(regrowth)
+```
+
+
+
+## Inspect the data plotting fruit production against root size for each of the two treatments separately
+
+```{r}
+grazed <- subset(regrowth, Grazing == "Grazed")
+ungrazed <- subset(regrowth, Grazing == "Ungrazed")
+with(grazed,
+     plot(Fruit ~ Root, pch=16, col="red", xlim=c(4,11), ylim=c(14,117))) # look at the summary above to set the limits
+with(ungrazed,
+     points(Fruit ~ Root, pch=17, col="grey"))
+```
+
+The root size of plants in grazed plots is larger!
+
+## Calculate the mean fruit production for grazed and ungrazed plants and plot the data: are the means statistically different? Specify the null and alternative hypothesis and test using a t-test
+
+```{r}
+mean(grazed$Fruit)
+mean(ungrazed$Fruit)
+# or
+library(dplyr)
+regrowth %>% 
+  group_by(Grazing) %>% 
+  summarize(mean(Fruit))
+```
+
+```{r}
+with(regrowth,
+     boxplot(Fruit ~ Grazing))
+```
+
+```{r}
+var(grazed$Fruit, na.rm = T)
+var(ungrazed$Fruit, na.rm = T)
+var.test(grazed$Fruit,ungrazed$Fruit)
+```
+
+
+
+```{r}
+with(regrowth,
+     t.test(Fruit ~ Grazing))
+```
+
+Grazing seems to increase fruit production!
+
+## Now fit a regression model including both Root and Grazing as explanatory variables and comment on the results
+
+```{r}
+ancova <- lm(Fruit ~ Grazing * Root, data = regrowth)
+summary(ancova)
+```
+
+This shows that initial root size has a massive effect on fruit production (t =15.182), but
+there is no indication of any difference in the slope of this relationship between the two
+grazing treatments (this is the Grazing by Root interaction with t =0.321). The
+ANOVA table for the maximal model looks like this:
+
+```{r}
+anova(ancova)
+```
+
+
+## Try to remove the interaction terms and compare the first and second model through an ANOVA table
+
+```{r}
+ancova2 <- lm(Fruit ~ Grazing + Root, data = regrowth)
+summary(ancova2)
+```
+
+```{r}
+anova(ancova, ancova2)
+```
+
+This says that model simplification was justified because it caused a negligible reduction in
+the explanatory power of the model (p=0.75; to retain the interaction term in the model
+we would need p<0.05).
+
+## Further simplify the model removing Grazing and compare again through an ANOVA table
+
+```{r}
+ancova3 <- lm(Fruit ~ Root, data = regrowth)
+summary(ancova3)
+```
+
+
+```{r}
+anova(ancova2, ancova3)
+```
+
+This model simplification is a step too far. Removing the Grazing term causes a massive
+reduction in the explanatory power of the model, with an F value of 115.63 and a vanishingly
+small p value. The effect of grazing in reducing fruit production is highly significant and
+needs to be retained in the model.
+
+## Compare the models using the *step* function
+
+This function causes all the terms to be tested to see whether they are needed in the minimal
+adequate model. The criterion used is AIC, Akaike’s information criterion. In the
+jargon, this is a ‘penalized log-likelihood’. What this means in simple terms is that it weighs
+up the inevitable trade-off between degrees of freedom and fit of the model.
+
+```{r}
+step(ancova)
+```
+
+
+# Summary
+
+In the analyses of covariance, first you compute two different regression lines.   
+Next, you see whether the slopes are significantly different from zero.
+
+* If the slopes of the regression lines are different, the lines cross each other somewhere (you check for the significance of the interaction term). One group has higher Y values in one part of the graph and lower Y values in another part of the graph. In this case we are thus not very interested in the difference between the intercepts.  
+* If the slopes are not significantly different, you then draw a regression line through each group of points, all with the same slope.   
+Then, you test the null hypothesis that all of the Y intercepts of the regression lines with a common slope are the same. Because the lines are parallel, saying that they are significantly different at one point (the Y intercept) means that the lines are different at any point.

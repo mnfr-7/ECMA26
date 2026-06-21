@@ -1,0 +1,96 @@
+---
+title: "Chisquare exercises"
+output: html_notebook
+---
+
+# Code for slide examples
+
+Remember that `df = (nrows-1)(ncols-1)`.
+
+```{r gof-test}
+## chi2 - goodness of fit test
+freq <- c(22, 21, 22, 27, 22, 36)
+probs <- rep(1/6, 6)
+chisq.test(freq, p = probs)
+```
+
+```{r independence-test}
+## chi2 - test of independence
+yesbelt <- c(12813, 647, 359, 42)
+nobelt <- c(65963, 4000, 2642, 303)
+
+chisq.test(data.frame(yesbelt, nobelt))
+
+names(chisq.test(data.frame(yesbelt, nobelt)))
+
+data.frame(yesbelt, nobelt)
+rowSums(data.frame(yesbelt, nobelt))
+colSums(data.frame(yesbelt, nobelt))
+
+# for the first cell
+78776*13861/sum(data.frame(yesbelt, nobelt))
+
+chisq.test(data.frame(yesbelt, nobelt))$exp
+
+a <- chisq.test(data.frame(yesbelt, nobelt))
+
+a
+names(a)
+a$p.value
+```
+
+
+```{r homogeneity-test}
+## chi2 - test of homogeneity
+die.fair <- sample(1:6, 200, p=c(1,1,1,1,1,1)/6, replace = TRUE)
+die.bias <- sample(1:6, 200, p=c(0.5,0.5,1,1,1,2)/6, replace = TRUE)
+
+res.fair <- table(die.fair)
+res.bias <- table(die.bias)
+
+rbind(res.fair, res.bias)
+
+chisq.test(rbind(res.fair, res.bias))
+
+names(chisq.test(rbind(res.fair, res.bias)))
+```
+
+# Exercices
+
+## Exercise 1
+
+A fish survey is done to see if the proportion of fish types is consistent with previous years. Suppose, the 3 types of fish recorded: parrotfish, grouper, tang are historically in a 5:3:4 proportion and in a survey the following counts are found:
+
+```{r}
+freq <- c(53, 22, 49)
+probs <- c(5/12, 3/12, 4/12)
+chisq.test(freq, p = probs)
+```
+
+
+## Exercise 2
+
+In an effort to increase student retention, many colleges have tried block programs. Suppose 100 students are broken into two groups of 50 at random. One half are in a block program, the other half not. The number of years in attendance is then measured. We wish to test if the block program makes a difference in retention.
+The data is:
+
+```{r}
+nonblock <- c(18, 15, 5, 8, 4)
+block <- c(10, 5, 7, 18, 10)
+chisq.test(data.frame(nonblock, block))
+```
+
+What chi-square test is appropriate here? Does the block program actually make a difference?
+
+## Exercise 3
+
+A survey of drivers was taken to see if they had been in an accident during the previous year, and if so was it a minor or major accident. The results are tabulated by age group:
+
+```{r}
+none <- c(67, 42, 75, 56, 57)
+minor <- c(10, 6, 8, 4, 15)
+major <-  c(5, 5, 4, 6, 1)
+names <- c("under 18", "18-25", "26-40", "40-65", "over 65")
+data.frame(names, none, minor, major)
+```
+
+Do a chi-squared hypothesis test of homogeneity to see if there is difference in distributions based on age.

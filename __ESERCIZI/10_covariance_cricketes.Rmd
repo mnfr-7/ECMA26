@@ -1,0 +1,65 @@
+---
+title: "Covariance - cricket exercise"
+output: 
+  html_document: 
+    theme: paper
+    toc: yes
+    toc_float: yes
+  html_notebook: 
+    toc: yes
+    toc_float: yes
+---
+
+Walker (1962) studied the mating songs of male tree crickets. 
+
+Each wingstroke by a cricket produces a pulse of song, and females may use the number of pulses per second to identify males of the correct species.   
+
+Walker (1962) wanted to know whether the chirps of the crickets *Oecanthus exclamationis* and *Oecanthus niveus* had different pulse rates. He measured the pulse rate of the crickets at a variety of temperatures.
+
+```{r}
+crickets <- read.table("data/covariance_crickets.txt", sep=";", header = T)
+head(crickets)
+```
+
+1. Describe the dataset and look at the distribution of the dependent variable.
+2. Inspect the data plotting pulse rate against temperature for each of the two species separately
+3. Calculate the mean pulse rate for the two species and plot the data: are the means statistically different? Specify the null and alternative hypothesis and test using a t-test
+4. Now fit a regression model including both Pulse and Species as explanatory variables and comment on the results.
+5. Try to remove the interaction term and compare the first and second model through an ANOVA table.
+6. Further simplify the model removing Pulse and compare again through an ANOVA table.
+7. Compare the models using the *step* function.
+
+## 1. Describe the dataset and look at the distribution of the dependent variable
+
+
+
+
+
+## 2. Inspect the data plotting Pulse against Temp for each of the two species separately
+
+
+
+
+## 3. Calculate the mean Pulse for the two species and plot the data: are the means statistically different? Specify the null and alternative hypothesis and test using a t-test
+
+
+
+## 4. Now fit a regression model including both Temp and Species as explanatory variables and comment on the results
+
+
+
+
+## 5. Try to remove the interaction terms and compare the first and second model through an ANOVA table
+
+
+
+
+## 6. Further simplify the model removing Grazing and compare again through an ANOVA table
+
+
+
+
+
+## 7. Compare the models using the *step* function
+
+
